@@ -1,7 +1,6 @@
 use core::cmp;
 
-use alloc::{format, string::String};
-use arch::get_int_records;
+use alloc::string::String;
 use vfscore::{INodeInterface, StatMode, VfsResult};
 
 pub struct Interrupts {}
@@ -14,13 +13,14 @@ impl Interrupts {
 
 impl INodeInterface for Interrupts {
     fn readat(&self, offset: usize, buffer: &mut [u8]) -> VfsResult<usize> {
-        let mut str = String::new();
-        for (irq, times) in get_int_records().iter().enumerate() {
-            if *times == 0 {
-                continue;
-            }
-            str += &format!("{}: {}\r\n", irq, *times);
-        }
+        let str = String::new();
+        // FIXME: Use new interrupts method to record this.
+        // for (irq, times) in get_int_records().iter().enumerate() {
+        //     if *times == 0 {
+        //         continue;
+        //     }
+        //     str += &format!("{}: {}\r\n", irq, *times);
+        // }
         let bytes = str.as_bytes();
         let rsize = cmp::min(bytes.len() - offset, buffer.len());
         buffer[..rsize].copy_from_slice(&bytes[offset..offset + rsize]);
